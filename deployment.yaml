@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: branch-locator
+  namespace: finance
+  labels:
+    app: branch-locator
+    type: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: branch-locator
+  template:
+    metadata:
+      labels:
+        app: branch-locator
+        type: backend
+    spec:
+      containers:
+      - name: branch-locator
+        image: davidmacdonaldkong/branch-locator-service:latest
+        readinessProbe:
+          httpGet:
+            path: /branches
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
+        ports:
+        - containerPort: 8080
